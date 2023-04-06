@@ -78,17 +78,17 @@ watch: Build the target directory and update it every time the source and static
 Structure of config JSON file: {
     // path to directory containing HTML files
     sourceDirectory: string 
-	
+    
     // path to directory containing static files to copy into out directory.
     // Must not be equal to the source directory.
     staticDirectory: string
 	
     // The target directory to place the built and copied files into.
     outDirectory: string
-	
-	// if turned on, it will clear the build folder before every full build. this does not apply to a watch.
-	// highly recommended, unless htmlbuild is used together with another build tool that clears the build folder before it
-	clearBuildFolder: boolean
+    
+    // if turned on, it will clear the build folder before every full build. this does not apply to a watch.
+    // highly recommended, unless htmlbuild is used together with another build tool that clears the build folder before it
+    clearBuildFolder: boolean
 }
 
 Arguments:
