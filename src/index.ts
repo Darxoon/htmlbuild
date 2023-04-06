@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readFile, writeFile } from "fs/promises"
+import { readFile, rm, writeFile } from "fs/promises"
 import { build } from "./build.js"
 import { watchFiles } from "./watch.js"
 import { exit } from "process"
@@ -31,6 +31,10 @@ import json5 from "json5"
 	
 	// The target directory to place the built and copied files into.
 	"outDirectory": "dist/",
+	
+	// if turned on, it will clear the build folder before every full build. this does not apply to a watch.
+	// highly recommended, unless htmlbuild is used together with another build tool that clears the build folder before it
+	"clearBuildFolder": true,
 }
 `
 		await writeFile("htmlbuild.config.json", file, 'utf8')
@@ -39,10 +43,14 @@ import json5 from "json5"
 	
 	configFile ||= "htmlbuild.config.json"
 	
-	let { sourceDirectory, staticDirectory, outDirectory } = json5.parse(await readFile(configFile, 'utf8'))
+	let { sourceDirectory, staticDirectory, outDirectory, clearBuildFolder } = json5.parse(await readFile(configFile, 'utf8'))
 	
 	if (resolve(sourceDirectory) == resolve(staticDirectory)) {
 		throw new Error("Source and Static directory are not allowed to be equal.")
+	}
+	
+	if (clearBuildFolder ?? true) {
+		await rm(outDirectory, { recursive: true, force: true })
 	}
 	
 	if (method == "build") {
@@ -58,11 +66,13 @@ import json5 from "json5"
 
 function printHelpMessage() {
 	console.log(`
-Usage: htmlbuild build|watch [<config>]
+Usage: htmlbuild init|build|watch [<config>]
 Simple HTML build tool
 
-build: Generate the target directory once and quit.
-watch: Generate the target directory and update it every time the source and static directory change.
+init: Generate a base config file.
+build: Build the target directory once and quit.
+watch: Build the target directory and update it every time the source and static directory change.
+
 <config>: Path to the config JSON file. If left empty, it will check for htmlbuild.config.json in the root directory.
 
 Structure of config JSON file: {
@@ -75,6 +85,10 @@ Structure of config JSON file: {
 	
     // The target directory to place the built and copied files into.
     outDirectory: string
+	
+	// if turned on, it will clear the build folder before every full build. this does not apply to a watch.
+	// highly recommended, unless htmlbuild is used together with another build tool that clears the build folder before it
+	clearBuildFolder: boolean
 }
 
 Arguments:

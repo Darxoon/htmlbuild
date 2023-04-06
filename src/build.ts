@@ -4,8 +4,6 @@ import path from "path";
 import colors from "colors"
 
 export async function build(srcDir: string, staticDir: string, distDir: string) {
-	await fs.rm(distDir, { recursive: true, force: true })
-	
 	console.log(colors.cyan('Building output directory...'))
 	
 	let sourceFiles = await getSourceFiles(srcDir)
