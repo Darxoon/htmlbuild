@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
-import { readFile } from "fs/promises"
+import { readFile, writeFile } from "fs/promises"
 import { build } from "./build.js"
 import { watchFiles } from "./watch.js"
 import { exit } from "process"
 import { resolve } from "path"
+import json5 from "json5"
 
 {
 	let [,, method, configFile] = process.argv
@@ -19,9 +20,26 @@ import { resolve } from "path"
 		exit()
 	}
 	
+	if (method == "init") {
+		const file = `{
+	// path to directory containing HTML files
+	"sourceDirectory": "src/",
+	
+	// path to directory containing static files to copy into out directory.
+	// Must not be equal to the source directory.
+	"staticDirectory": "static/",
+	
+	// The target directory to place the built and copied files into.
+	"outDirectory": "dist/",
+}
+`
+		await writeFile("htmlbuild.config.json", file, 'utf8')
+		exit()
+	}
+	
 	configFile ||= "htmlbuild.config.json"
 	
-	let { sourceDirectory, staticDirectory, outDirectory } = JSON.parse(await readFile(configFile, 'utf8'))
+	let { sourceDirectory, staticDirectory, outDirectory } = json5.parse(await readFile(configFile, 'utf8'))
 	
 	if (resolve(sourceDirectory) == resolve(staticDirectory)) {
 		throw new Error("Source and Static directory are not allowed to be equal.")
