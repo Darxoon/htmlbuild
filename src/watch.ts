@@ -15,6 +15,9 @@ function createSourceWatcher(sourceDir: string, distDir: string) {
 	let sourceFiles: SourceFile[]
 	
 	async function prepareFile(path: string) {
+		if (!path.endsWith('.html'))
+			return
+		
 		sourceFiles = await getSourceFiles(sourceDir)
 		
 		let totalPath = resolve(path)
@@ -44,6 +47,9 @@ function createSourceWatcher(sourceDir: string, distDir: string) {
 	}
 	
 	async function deleteFile(path: string) {
+		if (!path.endsWith('.html'))
+			return
+		
 		let totalPath = resolve(path)
 		const relevantFile = sourceFiles.find(source => source.totalPath == totalPath)
 		

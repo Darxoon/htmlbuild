@@ -50,7 +50,13 @@ import json5 from "json5"
 	}
 	
 	if (clearBuildFolder ?? true) {
-		await rm(outDirectory, { recursive: true, force: true })
+		try {
+			await rm(outDirectory, { recursive: true, force: true })
+		} catch (e) {
+			console.error("Could not clear build folder")
+			console.error(e)
+			exit(1)
+		}
 	}
 	
 	if (method == "build") {
