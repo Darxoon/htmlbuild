@@ -16,7 +16,7 @@ import json5 from "json5"
 	}
 
 	if (method == '-v' || method == '--version') {
-		console.log('v1.0.0')
+		console.log('v1.0.1')
 		exit()
 	}
 	
